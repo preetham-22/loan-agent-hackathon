@@ -20,10 +20,16 @@
    - Click "Advanced settings" before deploying
    - Add to secrets.toml:
    ```toml
-   OPENAI_API_KEY = "your_openai_api_key_here"
+   OPENAI_API_KEY = "sk-your-actual-openai-api-key-here"
    DEPLOYMENT_MODE = "demo"
    API_BASE_URL = "demo"
    ```
+   
+   **⚠️ IMPORTANT**: Replace `sk-your-actual-openai-api-key-here` with your real OpenAI API key.
+   
+   **Don't have an OpenAI API key?**
+   - Get one from: https://platform.openai.com/api-keys
+   - Or set `DEPLOYMENT_MODE = "demo"` to use fallback mode without AI
 
 5. **Deploy**: Click "Deploy!" and wait for deployment
 
@@ -64,6 +70,27 @@ For a production deployment:
 3. Set `DEPLOYMENT_MODE` to "production"
 4. Integrate with real banking APIs
 5. Add proper authentication and security measures
+
+## 🛠️ Troubleshooting
+
+### OpenAI API Key Error
+If you see `openai.OpenAIError: The api_key client option must be set`:
+
+1. **Check your secrets**: Make sure `OPENAI_API_KEY` is set in Streamlit Cloud secrets
+2. **Verify API key format**: Should start with `sk-` followed by characters
+3. **Test locally**: Run `echo $OPENAI_API_KEY` to verify key is set
+4. **Use demo mode**: Set `DEPLOYMENT_MODE = "demo"` to bypass OpenAI dependency
+
+### Import Errors
+If you see `ModuleNotFoundError`:
+- The app automatically falls back to demo mode
+- All core functionality still works
+- You'll see a "Demo Mode" warning
+
+### Module Path Issues
+If you see import path errors:
+- Make sure main file is set to `app/main.py` 
+- Repository structure should match the GitHub repo exactly
 
 ---
 

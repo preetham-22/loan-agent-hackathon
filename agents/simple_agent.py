@@ -58,10 +58,14 @@ def process_loan_application(user_message: str) -> str:
     Main processing function that mimics the LangGraph workflow
     """
     try:
-        # Import the full workflow if available
-        from agents.graph import app
-        result = app.invoke({"messages": [{"role": "user", "content": user_message}]})
-        return result["messages"][-1]["content"]
+        # Check if we can import the full workflow safely
+        import os
+        if os.getenv("OPENAI_API_KEY") or (hasattr(__import__('streamlit'), 'secrets') and 'OPENAI_API_KEY' in __import__('streamlit').secrets):
+            from agents.graph import app
+            result = app.invoke({"messages": [{"role": "user", "content": user_message}]})
+            return result["messages"][-1]["content"]
+        else:
+            raise ImportError("No OpenAI API key available")
     except (ImportError, Exception) as e:
         # Fallback to simple processing
         print(f"Using fallback processing: {e}")

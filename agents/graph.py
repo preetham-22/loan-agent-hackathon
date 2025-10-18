@@ -39,8 +39,45 @@ except ImportError:
 # Load environment variables
 load_dotenv()
 
-# Initialize LLM
-llm = ChatOpenAI(model="gpt-4o")
+# Initialize LLM with proper API key handling
+def get_openai_client():
+    """Get OpenAI client with proper API key handling for different environments"""
+    import os
+    
+    # Try different ways to get the API key
+    api_key = None
+    
+    # Method 1: From environment variables (local development)
+    api_key = os.getenv("OPENAI_API_KEY")
+    
+    # Method 2: From Streamlit secrets (Streamlit Cloud)
+    if not api_key:
+        try:
+            import streamlit as st
+            api_key = st.secrets.get("OPENAI_API_KEY", None)
+        except:
+            pass
+    
+    # Method 3: Check if it's a demo deployment
+    if not api_key:
+        deployment_mode = os.getenv("DEPLOYMENT_MODE", "local")
+        if deployment_mode == "demo":
+            # Return None to trigger fallback mode
+            return None
+    
+    if api_key:
+        return ChatOpenAI(model="gpt-4o", api_key=api_key)
+    else:
+        print("Warning: No OpenAI API key found, will use fallback mode")
+        return None
+
+try:
+    llm = get_openai_client()
+    LLM_AVAILABLE = llm is not None
+except Exception as e:
+    print(f"Warning: Failed to initialize OpenAI client: {e}")
+    llm = None
+    LLM_AVAILABLE = False
 
 
 # Pydantic model for structured extraction
@@ -178,11 +215,13 @@ def call_initial_user_interaction_node(state: AgentState) -> dict:
         last_message = state["messages"][-1]
         user_content = last_message.get("content", "")
         
-        # Use Pydantic structured output for reliable extraction
-        llm_with_tool = llm.with_structured_output(InitialQuery)
-        
-        # Create a simple extraction prompt
-        extraction_prompt = f"""Extract the customer ID and requested loan amount from the following user message.
+        # Check if LLM is available
+        if LLM_AVAILABLE and llm is not None:
+            # Use Pydantic structured output for reliable extraction
+            llm_with_tool = llm.with_structured_output(InitialQuery)
+            
+            # Create a simple extraction prompt
+            extraction_prompt = f"""Extract the customer ID and requested loan amount from the following user message.
 Look for patterns like:
 - Customer ID/number (may be preceded by #, "customer", "id", etc.)
 - Loan amount (may have currency symbols like $ or ₹, and may include commas)
@@ -191,16 +230,34 @@ User message: "{user_content}"
 
 Extract the customer ID as an integer and the loan amount as a float (without currency symbols or commas)."""
 
-        try:
-            # Invoke LLM with structured output
-            extracted_query = llm_with_tool.invoke(extraction_prompt)
-            
-            # Access the extracted values from the Pydantic object
-            customer_id = extracted_query.customer_id
-            requested_amount = extracted_query.requested_amount
-            
-        except Exception as extraction_error:
-            # Fallback to regex if structured extraction fails
+            try:
+                # Invoke LLM with structured output
+                extracted_query = llm_with_tool.invoke(extraction_prompt)
+                
+                # Access the extracted values from the Pydantic object
+                customer_id = extracted_query.customer_id
+                requested_amount = extracted_query.requested_amount
+                
+            except Exception as extraction_error:
+                # Fallback to regex if structured extraction fails
+                print(f"Structured extraction failed: {extraction_error}")
+                import re
+                customer_id_match = re.search(r'customer\s*#?(\d+)', user_content, re.IGNORECASE)
+                amount_match = re.search(r'[\$₹]?(\d{1,3}(?:,?\d{3})*(?:\.\d{2})?)', user_content)
+                
+                if customer_id_match and amount_match:
+                    customer_id = int(customer_id_match.group(1))
+                    requested_amount = float(amount_match.group(1).replace(',', ''))
+                else:
+                    error_msg = "Please provide both customer ID and loan amount clearly. Format: 'Customer X needs $Y'"
+                    state["error_message"] = error_msg
+                    state["messages"].append({
+                        "role": "assistant",
+                        "content": error_msg
+                    })
+                    return {"messages": state["messages"], "error_message": state["error_message"]}
+        else:
+            # Use fallback extraction when LLM is not available
             import re
             customer_id_match = re.search(r'customer\s*#?(\d+)', user_content, re.IGNORECASE)
             amount_match = re.search(r'[\$₹]?(\d{1,3}(?:,?\d{3})*(?:\.\d{2})?)', user_content)
