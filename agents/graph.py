@@ -1,13 +1,18 @@
 from typing import TypedDict, List, Dict, Any, Optional
 import json
 import os
+import sys
 from dotenv import load_dotenv
 from langchain_openai import ChatOpenAI
 from langchain_core.messages import HumanMessage, SystemMessage
 from pydantic import BaseModel, Field
 
 # Import tool functions
-from agents.tools import verify_kyc, run_underwriting, generate_sanction_letter
+try:
+    from agents.tools import verify_kyc, run_underwriting, generate_sanction_letter
+except ImportError:
+    # Fallback for relative imports
+    from .tools import verify_kyc, run_underwriting, generate_sanction_letter
 
 # Load environment variables
 load_dotenv()
