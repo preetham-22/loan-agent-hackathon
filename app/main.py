@@ -6,7 +6,16 @@ import os
 # Add the parent directory to the Python path
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from agents.graph import app, AgentState
+# Try to import the main agent, with fallback
+try:
+    from agents.graph import app, AgentState
+    AGENT_AVAILABLE = True
+except ImportError as e:
+    st.warning("⚠️ Running in Demo Mode - Full AI agent not available")
+    print(f"Agent import failed: {e}")
+    from agents.simple_agent import process_loan_application
+    AGENT_AVAILABLE = False
+    AgentState = dict  # Simple fallback
 
 # Page configuration
 st.set_page_config(
@@ -73,20 +82,24 @@ if prompt := st.chat_input("How can I help you today?"):
         try:
             # Simple direct execution (better for debugging)
             with st.spinner("Processing your loan application..."):
-                # Execute the workflow directly
-                final_state = app.invoke(graph_input)
-                
-                # Extract the response from final state
-                full_response = "I'm processing your request..."
-                
-                if final_state and "messages" in final_state:
-                    messages = final_state["messages"]
-                    if messages:
-                        # Find the last assistant message
-                        for message in reversed(messages):
-                            if message.get("role") == "assistant":
-                                full_response = message.get("content", "Processing complete.")
-                                break
+                # Execute the workflow with fallback support
+                if AGENT_AVAILABLE:
+                    final_state = app.invoke(graph_input)
+                    
+                    # Extract the response from final state
+                    full_response = "I'm processing your request..."
+                    
+                    if final_state and "messages" in final_state:
+                        messages = final_state["messages"]
+                        if messages:
+                            # Find the last assistant message
+                            for message in reversed(messages):
+                                if message.get("role") == "assistant":
+                                    full_response = message.get("content", "Processing complete.")
+                                    break
+                else:
+                    # Use simple fallback processing
+                    full_response = process_loan_application(prompt)
                 
                 # Display the response
                 st.write(full_response)
