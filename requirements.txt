@@ -1,0 +1,27 @@
+# FastAPI and server dependencies
+fastapi
+uvicorn[standard]
+
+# Streamlit for front-end
+streamlit
+
+# LangGraph for agentic workflow
+langgraph
+langchain
+langchain-core
+
+# Environment variables
+python-dotenv
+
+# OpenAI SDK
+openai
+
+# HTTP requests
+requests
+
+# PDF generation
+reportlab
+
+# Additional useful dependencies
+pydantic
+typing-extensions

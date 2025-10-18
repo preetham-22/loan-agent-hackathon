@@ -1,0 +1,102 @@
+[
+  {
+    "id": 1,
+    "name": "Sarah Johnson",
+    "age": 32,
+    "city": "New York",
+    "phone": "+1-555-0123",
+    "address": "123 Oak Street, New York, NY 10001",
+    "credit_score": 785,
+    "pre_approved_limit": 85000.0
+  },
+  {
+    "id": 2,
+    "name": "Michael Chen",
+    "age": 28,
+    "city": "San Francisco",
+    "phone": "+1-555-0456",
+    "address": "456 Pine Avenue, San Francisco, CA 94102",
+    "credit_score": 685,
+    "pre_approved_limit": 42000.0
+  },
+  {
+    "id": 3,
+    "name": "Emily Rodriguez",
+    "age": 35,
+    "city": "Chicago",
+    "phone": "+1-555-0789",
+    "address": "789 Maple Drive, Chicago, IL 60601",
+    "credit_score": 743,
+    "pre_approved_limit": 68500.0
+  },
+  {
+    "id": 4,
+    "name": "David Thompson",
+    "age": 41,
+    "city": "Austin",
+    "phone": "+1-555-1012",
+    "address": "321 Cedar Lane, Austin, TX 78701",
+    "credit_score": 821,
+    "pre_approved_limit": 95000.0
+  },
+  {
+    "id": 5,
+    "name": "Jessica Wang",
+    "age": 29,
+    "city": "Seattle",
+    "phone": "+1-555-1345",
+    "address": "654 Birch Road, Seattle, WA 98101",
+    "credit_score": 695,
+    "pre_approved_limit": 35000.0
+  },
+  {
+    "id": 6,
+    "name": "Robert Martinez",
+    "age": 38,
+    "city": "Miami",
+    "phone": "+1-555-1678",
+    "address": "987 Palm Boulevard, Miami, FL 33101",
+    "credit_score": 756,
+    "pre_approved_limit": 72000.0
+  },
+  {
+    "id": 7,
+    "name": "Amanda Foster",
+    "age": 26,
+    "city": "Denver",
+    "phone": "+1-555-1901",
+    "address": "147 Spruce Circle, Denver, CO 80202",
+    "credit_score": 712,
+    "pre_approved_limit": 48000.0
+  },
+  {
+    "id": 8,
+    "name": "Christopher Lee",
+    "age": 44,
+    "city": "Boston",
+    "phone": "+1-555-2234",
+    "address": "258 Elm Street, Boston, MA 02101",
+    "credit_score": 834,
+    "pre_approved_limit": 98000.0
+  },
+  {
+    "id": 9,
+    "name": "Nicole Brown",
+    "age": 31,
+    "city": "Phoenix",
+    "phone": "+1-555-2567",
+    "address": "369 Willow Way, Phoenix, AZ 85001",
+    "credit_score": 789,
+    "pre_approved_limit": 78500.0
+  },
+  {
+    "id": 10,
+    "name": "Kevin Patel",
+    "age": 33,
+    "city": "Portland",
+    "phone": "+1-555-2890",
+    "address": "741 Ash Avenue, Portland, OR 97201",
+    "credit_score": 667,
+    "pre_approved_limit": 39000.0
+  }
+]
